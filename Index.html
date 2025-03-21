@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endesa - Simulador de Poupança</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #007bff;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .msg {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .resultado {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🎉 70€ de Oferta na Sua Primeira Fatura com a Endesa! 🎉</h2>
+</div>
+
+<div class="container">
+    <h2>📄 Tem a Sua Fatura à Mão?</h2>
+    <p>Faça o upload da sua fatura para garantir o melhor preço.</p>
+    <input type="file" id="fatura">
+    <button onclick="enviarFatura()">Enviar</button>
+</div>
+
+<div class="container">
+    <h2>💰 Simulador de Poupança</h2>
+    <label>Valor médio da sua fatura (€):</label>
+    <input type="number" id="valorFatura" placeholder="Insira o valor" required>
+    <button onclick="calcularPoupanca()">Calcular</button>
+    <p class="resultado" id="resultado"></p>
+</div>
+
+<div class="container">
+    <h2>📢 Formulário de Contacto</h2>
+    <form id="contactForm">
+        <input type="text" id="nome" placeholder="Nome" required>
+        <input type="tel" id="telefone" placeholder="Telefone" required>
+        <input type="text" id="morada" placeholder="Morada" required>
+        <button type="submit">Enviar</button>
+        <p class="msg"></p>
+    </form>
+</div>
+
+<script>
+    // Simulador de Poupança
+    function calcularPoupanca() {
+        let valor = parseFloat(document.getElementById("valorFatura").value);
+        if (isNaN(valor) || valor <= 0) {
+            document.getElementById("resultado").innerHTML = "⚠️ Insira um valor válido!";
+            return;
+        }
+        let poupanca = valor * 0.3; // Calcula 30% de desconto
+        document.getElementById("resultado").innerHTML = `⚡ Com a Endesa, pode poupar aproximadamente ${poupanca.toFixed(2)}€ na sua fatura!`;
+    }
+
+    // Envio do Formulário de Contacto
+    document.getElementById("contactForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        
+        let nome = document.getElementById("nome").value;
+        let telefone = document.getElementById("telefone").value;
+        let morada = document.getElementById("morada").value;
+        let msgBox = document.querySelector(".msg");
+
+        let response = await fetch("/api/enviar-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nome, telefone, morada })
+        });
+
+        let result = await response.json();
+
+        if (result.success) {
+            msgBox.textContent = "✅ Enviado com sucesso!";
+            msgBox.style.color = "green";
+        } else {
+            msgBox.textContent = "❌ Erro ao enviar!";
+            msgBox.style.color = "red";
+        }
+    });
+
+    // Simulação de envio de fatura
+    function enviarFatura() {
+        alert("📄 Fatura enviada com sucesso! Em breve entraremos em contacto.");
+    }
+</script>
+
+</body>
+</html>
